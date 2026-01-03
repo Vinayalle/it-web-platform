@@ -8,8 +8,8 @@ export const Header = () => {
 
 
   return (
-    <header className="bg-white shadow-md">
-      <nav className="max-w-7xl mx-auto px-4">
+    <header className="bg-white rounded-lg shadow-md xl:p-4">
+      <nav className="px-4 mx-auto max-w-7xl">
         <div className="flex items-center justify-between h-16">
           
           {/* Logo */}
@@ -18,17 +18,17 @@ export const Header = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <ul className="hidden md:flex space-x-6">
+          <ul className="hidden space-x-6 md:flex">
             {MENU_ITEMS.map((item) => (
               <li key={item.label} className="relative group">
                 {item.Children ? (
                   <>
-                    <span className="cursor-pointer font-medium text-gray-700 hover:text-blue-600">
+                    <span className="font-medium text-gray-700 cursor-pointer hover:text-blue-600">
                       {item.label}
                     </span>
 
                     {/* Dropdown */}
-                    <ul className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <ul className="absolute left-0 invisible w-48 mt-2 transition-all duration-200 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible">
                       {item.Children.map((child) => (
                         <li key={child.label}>
                           <Link
@@ -56,7 +56,7 @@ export const Header = () => {
           {/* Mobile Button */}
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden text-gray-700 focus:outline-none"
+            className="text-gray-700 md:hidden focus:outline-none"
           >
             ☰
           </button>
@@ -64,7 +64,7 @@ export const Header = () => {
 
         {/* Mobile Menu */}
        {open && (
-  <ul className="md:hidden pb-4 space-y-2">
+  <ul className="pb-4 space-y-2 md:hidden">
     {MENU_ITEMS.map((item) => (
       <li key={item.label}>
         {item.Children ? (
@@ -74,7 +74,7 @@ export const Header = () => {
               onClick={() =>
                 setOpenMenu(openMenu === item.label ? null : item.label)
               }
-              className="w-full flex justify-between items-center font-semibold text-gray-700"
+              className="flex items-center justify-between w-full font-semibold text-gray-700"
             >
               {item.label}
               <span className="text-sm">
@@ -84,7 +84,7 @@ export const Header = () => {
 
             {/* Children (only when parent is open) */}
             {openMenu === item.label && (
-              <ul className="ml-4 mt-2 space-y-1">
+              <ul className="mt-2 ml-4 space-y-1">
                 {item.Children.map((child) => (
                   <li key={child.label}>
                     <Link

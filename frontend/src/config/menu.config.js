@@ -40,7 +40,7 @@ export const MENU_ITEMS = [
   },
   {
     label: "Blog",
-    path: "/blog",
+    path: "/blogs",
   },
   {
     label: "Contact",
