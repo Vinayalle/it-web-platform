@@ -23,12 +23,39 @@ export default function BlogForm() {
     resolver: zodResolver(blogSchema),
   });
 
-  function onSubmit(data: BlogFormData) {
+  async  function onSubmit(data: BlogFormData) {
     const payload = {
-      ...data,
-      tags: data.tags.split(",").map((t) => t.trim()),
-    };
-    console.log(payload);
+    title: data.title,
+    slug: data.slug,
+    excerpt: data.excerpt,
+    content: data.content, // HTML from editor
+    image: data.image,
+    category: data.category,
+    tags: data.tags.split(",").map((t) => t.trim()),
+    readTime: data.readTime,
+
+    seo: {
+      metaTitle: data.metaTitle,
+      metaDescription: data.metaDescription,
+      keywords: data.keywords, // string OR array
+    },
+
+    author: "Vinay Alle",
+    date: new Date().toISOString().split("T")[0],
+  };
+
+  const res = await fetch("/api/blogs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to create blog");
+  }
+
+  const result = await res.json();
+  console.log("Blog created:", result);
   }
 
   return (
@@ -66,13 +93,20 @@ export default function BlogForm() {
           error={errors.excerpt}
         />
 
-       <RichTextField
+         <Textarea
+          label="content"
+          rows={6}
+          register={register("content")}
+          error={errors.excerpt}
+        />
+
+       {/* <RichTextField
   name="content"
   label="Content"
   control={control}
   error={errors.content}
 />
-
+ */}
 
         <Input
           label="Image URL"
