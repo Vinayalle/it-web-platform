@@ -21,7 +21,7 @@ export default function BlogCard({blog}:BlogCardProps) {
           <span
             className={`inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-black text-white`}
           >
-            {blog.category}
+            {blog.category.name}
           </span>
 
           <h2 className="text-lg font-semibold line-clamp-2">
