@@ -3,26 +3,46 @@ import buildMetadata from '@/app/lib/seo';
 import { notFound } from 'next/navigation';
 import React from 'react'
 
-export async function generateMetadata({ params }: any) {
-  const blog = await getBlogBySlug((await params).slug);
+
+type PageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+async function getBlog(slug: string) {
+  const res = await fetch(
+    `${process.env.BACKEND_URL}/api/v1/blogs/${slug}`,
+    { cache: "no-store" }
+  );
+
+  if (!res.ok) return null;
+  return res.json();
+}
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params; // ✅ MUST await
+  const blog = await getBlog(slug);
+
   if (!blog) return notFound();
 
   return buildMetadata({
     title: blog.seo?.metaTitle || blog.title,
     description: blog.seo?.metaDescription || blog.excerpt,
-    keywords:blog.seo?.keywords,
+    keywords: blog.seo?.keywords,
     image: blog.image,
-    author:blog.author,
+    author: blog.author,
     type: "article",
-    canonical: `/blog/${blog.slug}`
+    canonical: `/blog/${blog.slug}`,
   });
-};
+}
 
-export default async function BlogDetails({ params }: any) {
-    const blog = await getBlogBySlug((await params).slug);
+
+
+/* ---------- PAGE ---------- */
+export default async function BlogDetails({ params }: PageProps) {
+  const { slug } = await params; // ✅ MUST await
+  const blog = await getBlog(slug);
 
   if (!blog) notFound();
-
 
   return (
     <article className="max-w-3xl px-4 py-10 mx-auto">
@@ -33,7 +53,7 @@ export default async function BlogDetails({ params }: any) {
       <div className="flex items-center mt-4 text-sm text-gray-500">
         <span>{blog.author}</span>
         <span className="mx-2">•</span>
-        <span>{blog.date}</span>
+        <span>{blog.publishedDate}</span>
         <span className="mx-2">•</span>
         <span>{blog.readTime} min read</span>
       </div>
@@ -49,16 +69,18 @@ export default async function BlogDetails({ params }: any) {
         dangerouslySetInnerHTML={{ __html: blog.content }}
       />
 
-      <div className="flex gap-2 mt-10">
-        {blog.tags.map(tag => (
-          <span
-            key={tag}
-            className="px-3 py-1 text-sm bg-gray-100 rounded-full"
-          >
-            #{tag}
-          </span>
-        ))}
-      </div>
+      {blog.tags?.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-10">
+          {blog.tags.map((tag: string) => (
+            <span
+              key={tag}
+              className="px-3 py-1 text-sm bg-gray-100 rounded-full"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
     </article>
-  )
+  );
 }
